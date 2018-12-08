@@ -45,15 +45,19 @@ body {
     margin: 0;
 }
 .line {
-    fill: none;
-    stroke: #EF5285;
-    stroke-width: 2px;
-  }
+  fill: none;
+  stroke: #999999;
+  stroke-width: 2px;
+}
+
+.selected{
+  stroke: #EF5285;
+}
   /* form */
   /* nav bar */
 #logo-container {
     background-color: #f2f2f2;
-    height: 70px;
+    height: 0px;
   }
   #logo {
     width: 134px;
