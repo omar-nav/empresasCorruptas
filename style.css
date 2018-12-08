@@ -11,11 +11,6 @@ body {
     height: 100%;
 }
 
-.buscador{
-    z-index: 222;
-
-}
-
 .marco{
     background: white;
     padding: 5px;
@@ -57,44 +52,44 @@ body {
   /* nav bar */
 #logo-container {
     background-color: #f2f2f2;
-    height: 0px;
-  }
-  #logo {
-    width: 134px;
-    height: 70px;
-    padding-top: 0px;
-    padding-right: 10px;
-  }
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-  }
+    height: 90px;
+}
+#logo {
+  width: 134px;
+  height: 70px;
+  padding-top: 0px;
+  padding-right: 10px;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
   
-  li {
-    float: left;
-  }
+li {
+  float: left;
+}
   
-  li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
   
-  li a:hover {
-    background-color: #111;
-  }
-  .active {
-    background-color: rgb(220, 40, 40);
-  }
-  li {
-    border-right: 1px solid #bbb;
-  }
+li a:hover {
+  background-color: #111;
+}
+.active {
+  background-color: rgb(220, 40, 40);
+}
+li {
+  border-right: 1px solid #bbb;
+}
   
-  li:last-child {
-    border-right: none;
-  }
+li:last-child {
+  border-right: none;
+}
