@@ -44,3 +44,8 @@ body {
     line-height: 18px;
     margin: 0;
 }
+.line {
+    fill: none;
+    stroke: #EF5285;
+    stroke-width: 2px;
+  }
