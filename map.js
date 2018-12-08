@@ -7,6 +7,11 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
     accessToken: 'pk.eyJ1Ijoib21hci1uYXZhcnJvIiwiYSI6ImNpanN2ZWZxZzBoa291eWx4ZWdsajl1OGIifQ.SH4OG9811nirTGJ3rE4DHw'
 }).addTo(mymap);
 
+// funcion global para agregar comas
+const numberWithCommas = (from) => {
+    return from.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
 function choroplethize(d) {
     return d > 162 ? '#990000' :
         d > 80 ? '#d7301f' :
@@ -52,41 +57,44 @@ function geojsonPopup(feature, layer){
 Secuestros2015Layer.addTo(mymap);
 var featureLayers = {
     "2015 Secuestros": Secuestros2015Layer
-//    "2017 January Zoning": Zoning2017Layer
 };
 var geojson = L.control.layers(featureLayers).addTo(mymap);
 
 // LEGEND STARTS HERE
-var SecuestrosParcelLegend = L.control({position: 'bottomright'});
+var Secuestros2015Legend = L.control({ position: 'bottomright' });
 
-SecuestrosParcelLegend.onAdd = function (mymap) {
+Secuestros2015Legend.onAdd = function (mymap) {
     var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 5, 11, 24, 80, 162],
-        labels = ['Suma de Secuestros 2015 <br> por estado'],
-        from, to;
-    for (var i = 0; i < grades.length; i++) {
+    grades = [0, 5, 11, 24, 80],
+    labels = ['Suma de Secuestros en 2015 por estado'],
+    fromLabel, from, toLabel, to;
+    for (var i = 0; i < grades.length-1; i++) {
         from = grades[i];
+        fromLabel = numberWithCommas(grades[i]);
         to = grades[i + 1];
+        toLabel = numberWithCommas(grades[i + 1]);
         labels.push(
-            '<i style="background' + choroplethize(from + 1) + '"></i> ' +
-            from + (to ? ' - ' + to : ' +'));
+            '<i style="background:' + choroplethize(from + 1) + '"></i> ' +
+            fromLabel + (toLabel ? ' - ' + toLabel : ' - 162'));
+            // last value of 1 billion on line 76 not currently being used
+            // kept as placemarker 
     }
     div.innerHTML = labels.join('<br>');
     return div;
 };
+Secuestros2015Legend.addTo(mymap);
+let currentLegend = Secuestros2015Legend;
 
-SecuestrosParcelLegend.addTo(mymap);
-currentLegend = SecuestrosParcelLegend;
-mymap.on('overlayadd', function (eventLayer) {
-    if  (eventLayer.name === '2015 Secuestros') {
+// LEGEND Box
+mymap.on('baselayerchange', function (eventLayer) {
+    if (eventLayer.name === '2015 Secuestros') {
         mymap.removeControl(currentLegend);
-        currentLegend = SecuestrosParcelLegend;
-        SecuestrosParcelLegend.addTo(mymap);
+        currentLegend = Secuestros2015Legend;
+        Secuestros2015Legend.addTo(mymap);
     }
-    // else if  (eventLayer.name === '2000 Census Population') {
-    //     map.removeControl(currentLegend);
-    //     currentLegend = Population2000Legend;
-    //     Population2000Legend.addTo(map);
+    // else if (eventLayer.name === '2017 Corruption') {
+    //     mymap.removeControl(currentLegend);
+    //     currentLegend = Corruption2017Legend;
+    //     Corruption2017Legend.addTo(mymap);
     // }
 });
-// LEGEND ENDS HERE
