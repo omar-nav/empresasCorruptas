@@ -31,7 +31,6 @@ function choroplethizeRatio(d) {
                  d > .1 ? '#fdd49e' :
                     '#fef0d9';
 }
-}
 function styleEmpresasTotal(feature) {
     return {
         weight: .75,
