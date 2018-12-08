@@ -86,7 +86,7 @@ var EmpresasRatioLegend = L.control({ position: 'bottomright' });
 
 EmpresasTotalesLegend.onAdd = function (mymap) {
     var div = L.DomUtil.create('div', 'info legend'),
-    grades = [0, 5, 11, 24, 80],
+    grades = [0, 5, 11, 24, 80, 162, 230],
     labels = ['Suma de Empresas con casos de corrupción'],
     fromLabel, from, toLabel, to;
     for (var i = 0; i < grades.length-1; i++) {
@@ -103,16 +103,16 @@ EmpresasTotalesLegend.onAdd = function (mymap) {
 };
 EmpresasRatioLegend.onAdd = function (mymap) {
     var div = L.DomUtil.create('div', 'info legend'),
-    grades = [.1,.2,.3,.4,.5,.7],
+    grades = [.1,.2,.3,.4,.5,.7,.8,.9],
     labels = ['Ratio de corrupción'],
     fromLabel, from, toLabel, to;
     for (var i = 0; i < grades.length-1; i++) {
         from = grades[i];
-        fromLabel = numberWithCommas(grades[i]);
+        fromLabel = grades[i];
         to = grades[i + 1];
-        toLabel = numberWithCommas(grades[i + 1]);
+        toLabel = grades[i + 1];
         labels.push(
-            '<i style="background:' + choroplethizeRatio(from + 1) + '"></i> ' +
+            '<i style="background:' + choroplethizeRatio(from + .01) + '"></i> ' +
             fromLabel + (toLabel ? ' - ' + toLabel : ' - .8'));
     }
     div.innerHTML = labels.join('<br>');
