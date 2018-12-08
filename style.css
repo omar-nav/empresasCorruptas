@@ -5,10 +5,12 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+    background-color: #333333;
 }
 
 #mapid {
-    height: 100%;
+    height: 85%;
+
 }
 
 .marco{
@@ -56,7 +58,7 @@ body {
 }
 #logo {
   width: 134px;
-  height: 70px;
+  height: 100%;
   padding-top: 0px;
   padding-right: 10px;
 }
