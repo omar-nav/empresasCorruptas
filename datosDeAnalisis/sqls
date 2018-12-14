@@ -1,0 +1,175 @@
+
+
+create table contratos_pf (
+  ciclo VARCHAR(255),
+  mes VARCHAR(255),
+  ka_proyecto VARCHAR(255),
+  folio VARCHAR(255),
+  nombre_proyecto VARCHAR(255),
+  numero_proyecto VARCHAR(255),
+  ka_estatus VARCHAR(255),
+  desc_estatus VARCHAR(255),
+  id_entidad_federativa VARCHAR(255),
+  entidad_federativa VARCHAR(255),
+  ka_municipio VARCHAR(255),
+  id_municipio VARCHAR(255),
+  municipio VARCHAR(255),
+  id_localidad VARCHAR(255),
+  localidad VARCHAR(255),
+  ambito VARCHAR(255),
+  recurso VARCHAR(255),
+  desc_recurso VARCHAR(255),
+  ramo VARCHAR(255),
+  desc_ramo VARCHAR(255),
+  pp VARCHAR(255),
+  desc_programa VARCHAR(255),
+  ka_programa_especifico VARCHAR(255),
+  programa_especifico VARCHAR(255),
+  ka_modalidad_contratacion VARCHAR(255),
+  modalidad_contratacion VARCHAR(255),
+  numero_contrato VARCHAR(255),
+  obra_adminstracion_contrato VARCHAR(255),
+  id_contratacion VARCHAR(255),
+  contratacion VARCHAR(255),
+  contrato VARCHAR(255),
+  monto VARCHAR(255),
+  justificacion VARCHAR(255),
+  anticipo_sn VARCHAR(255),
+  anticipo VARCHAR(255),
+  porcent_ant VARCHAR(255),
+  fecha_firma VARCHAR(255),
+  rfc_convocante VARCHAR(255),
+  convocante VARCHAR(255),
+  rfc_contratista VARCHAR(255),
+  contratista VARCHAR(255),
+  url VARCHAR(255),
+  id_estatus_contrato VARCHAR(255),
+  estatus_contrato VARCHAR(255),
+  importe_modificado VARCHAR(255),
+  fecha_conclusion_contrato VARCHAR(255),
+  fecha_conclusion VARCHAR(255),
+  url_documento VARCHAR(255)
+);
+
+create table contratistas (
+  rfc VARCHAR(50),
+  contratista varchar(255)
+)
+
+create table compranet (
+  ocid TEXT,
+  id TEXT,
+  tag TEXT,
+  initiationType TEXT,
+  date TEXT,
+  cr_ocid TEXT,
+  buyer_id TEXT,
+  buyer_name TEXT,
+  procuringEntity_id TEXT,
+  procuringEntity_name TEXT,
+  parties TEXT,
+  planning_budgetBreakdown TEXT,
+  tender_id TEXT,
+  tender_awardPeriod_startDate TEXT,
+  tender_awardPeriod_endDate TEXT,
+  tender_title TEXT,
+  tender_description TEXT,
+  tender_hasEnquiries TEXT,
+  tender_procurementMethod TEXT,
+  tender_procurementMethodRationale TEXT,
+  tender_value_amount TEXT,
+  tender_status TEXT,
+  tender_enquiryPeriod_startDate TEXT,
+  tender_enquiryPeriod_endDate TEXT,
+  tender_tenderers TEXT,
+  awards TEXT,
+  contracts TEXT,
+  releases TEXT
+);
+
+create table supplier (
+  id TEXT,
+  name TEXT,
+  roles TEXT
+)
+
+
+create table proveedores (
+  folio_rupc VARCHAR(255),
+  rfc VARCHAR(255),
+  nombre_empresa VARCHAR(255),
+  país VARCHAR(255),
+  entidad_federativa VARCHAR(255),
+  estratificación VARCHAR(255),
+  tipo_usuario VARCHAR(255),
+  sector VARCHAR(255),
+  giro VARCHAR(255),
+  contratos VARCHAR(255),
+  fecha_inscripción_rupc VARCHAR(255),
+  contratos_evaluados_laassp VARCHAR(255),
+  grado_cumplimiento_laassp VARCHAR(255),
+  contratos_evaluados_lopsrm VARCHAR(255),
+  grado_cumplimiento_lopsrm VARCHAR(255),
+  sitio_web VARCHAR(255)
+);
+
+/* get suppliers from companet */
+select id, name, roles
+ from (
+	select distinct parties::json -> 2 ->> 'id' as id, parties::json -> 2 ->> 'name' as name, parties::json -> 2 ->> 'roles' as roles
+	from compranet
+) as a
+group by a.id, a.name, a.roles
+having a.roles like '%supplier%'
+
+
+update contratos_pf set fecha_conclusion = to_date(fecha_conclusion, 'DD/MM/YYYY');
+update contratos_pf set fecha_conclusion_contrato = to_date(fecha_conclusion_contrato, 'DD/MM/YYYY');
+update contratos_pf set fecha_firma = to_date(fecha_firma, 'DD/MM/YYYY');
+
+
+
+create table sancionados (
+  proveedor TEXT,
+	proveedor_contratista TEXT,
+	dependencia TEXT,
+	numero_expediente TEXT,
+	hechos_irregularidad TEXT,
+	objeto_social TEXT,
+	sentido_resolucion TEXT,
+	fecha_notificacion TEXT,
+	fecha_resolucion TEXT,
+	plazo_monto1 TEXT,
+	monto TEXT,
+	nombre_responsable_informacion TEXT,
+	fecha_actualizacion TEXT,
+	per_notif TEXT,
+	categoria TEXT
+)
+
+
+
+select id, name, roles
+ from (
+	select distinct parties::json -> 18 ->> 'id' as id,
+	                parties::json -> 18 ->> 'name' as name,
+	                parties::json -> 18 ->> 'roles' as roles
+	from compranet
+) as a
+group by a.id, a.name, a.roles
+having a.roles like '%supplier%';
+
+
+
+select fecha_contrato, entidad_federativa, sum(gasto_monto) contrato, sum(monto_sancion) sancion
+from (
+      select
+       distinct c.contratista,
+       c.monto as gasto_monto,
+       date_part('year', c.d_fecha_firma) as fecha_contrato,
+       c.id_entidad_federativa as entidad_federativa,
+       s.monto as monto_sancion
+       from contratos_pf c
+       left join sancionados s on c.contratista like concat('%', s.proveedor, '%')
+) as contratos
+group by fecha_contrato, entidad_federativa;
